@@ -1,0 +1,6 @@
+# Crear archivo .gitignore para excluir archivos temporales
+echo ".vs/
+bin/
+obj/
+*.user
+*.suo" > .gitignore
