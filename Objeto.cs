@@ -1,41 +1,35 @@
-﻿using OpenTK.Mathematics;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Computadora3D
 {
-    public class Objeto : IDisposable
+    [Serializable]
+    class Objeto
     {
-        public string Nombre { get; set; }
-        private List<(Poligono poligono, Vector3 posicion)> poligonos;
+        public string Nombre { get; set; } = string.Empty;
+        // Centro del objeto [x, y, z]
+        public double[] Centro { get; set; } = new double[3];
 
-        public Objeto(string nombre)
-        {
-            Nombre = nombre;
-            poligonos = new List<(Poligono, Vector3)>();
-        }
+        // Posición del objeto en el escenario [x, y, z]
+        public double[] Posicion { get; set; } = new double[3];
+        public List<Partes> Partes { get; set; } = new();
+        public Dictionary<string, Partes> PartesDiccionario { get; set; } = new();
 
-        public void AgregarPoligono(Poligono poligono, Vector3 posicion = default)
+        // Agregar parte
+        public void AgregarParte(Partes parte)
         {
-            poligonos.Add((poligono, posicion));
-        }
-
-        public void Dibujar(Matrix4 model, Matrix4 view, Matrix4 projection)
-        {
-            foreach (var (poligono, posicion) in poligonos)
+            if (!PartesDiccionario.ContainsKey(parte.Nombre))
             {
-                // Aplicar traslación a cada polígono
-                Matrix4 modeloTransformado = model * Matrix4.CreateTranslation(posicion);
-                poligono.Dibujar(modeloTransformado, view, projection);
+                Partes.Add(parte);
+                PartesDiccionario[parte.Nombre] = parte;
             }
         }
 
-        public void Dispose()
+        // Obtener parte
+        public Partes? GetParte(string nombre)
         {
-            foreach (var (poligono, _) in poligonos)
-            {
-                poligono.Dispose();
-            }
-            poligonos.Clear();
+            PartesDiccionario.TryGetValue(nombre, out var parte);
+            return parte;
         }
     }
 }
