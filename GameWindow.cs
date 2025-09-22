@@ -62,7 +62,6 @@ namespace Computadora3D
                             foreach (var cara in parte.Caras)
                             {
                                 Console.WriteLine($"      Cara: {cara.Nombre}, Vértices: {cara.Vertices.Count}");
-                                cara.InicializarVertices();
                             }
                         }
                     }
