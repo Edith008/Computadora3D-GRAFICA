@@ -129,9 +129,9 @@ namespace Computadora3D
             Vector3 forward = Vector3.Normalize(camTarget - camPos);
             Vector3 right = Vector3.Normalize(Vector3.Cross(forward, Vector3.UnitY));
 
-            float deltaSpeed = camSpeed * (float)args.Time; // ajustar velocidad según el tiempo de frame
+            float deltaSpeed = camSpeed * (float)args.Time; 
 
-            // Mover cámara con WASD más lento
+            // Mover cámara 
             if (input.IsKeyDown(Keys.W)) camPos += forward * deltaSpeed;
             if (input.IsKeyDown(Keys.S)) camPos -= forward * deltaSpeed;
             if (input.IsKeyDown(Keys.A)) camPos -= right * deltaSpeed;
@@ -163,7 +163,7 @@ namespace Computadora3D
 
         private void ConfigurarMatrices(Matrix4 model)
         {
-            // Proyección (solo depende del tamaño de la ventana, se puede calcular una vez)
+            // Proyección 
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(
                 MathHelper.DegreesToRadians(60f),
                 Size.X / (float)Size.Y,
@@ -184,22 +184,14 @@ namespace Computadora3D
         private Vector3 ObtenerCentroEscenario()
         {
             if (Escenario == null) return Vector3.Zero;
-            // Escenario.Centro ya debería tener los valores centrales definidos en tu JSON
-            return new Vector3(
-                (float)Escenario.Centro[0],
-                (float)Escenario.Centro[1],
-                (float)Escenario.Centro[2]
-            );
+            return new Vector3((float)Escenario.Centro[0], (float)Escenario.Centro[1],(float)Escenario.Centro[2]);
         }
         private void Dibujar()
         {
             if (Escenario == null) return;
 
             Vector3 centro = ObtenerCentroEscenario();
-            Matrix4 escenarioModel = Matrix4.CreateTranslation(
-                -(float)centro.X,
-                -(float)centro.Y,
-                -(float)centro.Z
+            Matrix4 escenarioModel = Matrix4.CreateTranslation(-(float)centro.X, -(float)centro.Y,-(float)centro.Z
             );
 
             foreach (var objeto in Escenario.Objetos)
@@ -210,13 +202,6 @@ namespace Computadora3D
                     (float)objeto.Posicion[2]
                 ) * escenarioModel;
 
-                //Matrix4 objetoModel = Matrix4.CreateTranslation(
-                //    (float)objeto.Posicion[0],
-                //    (float)objeto.Posicion[1],
-                //    (float)objeto.Posicion[2]
-                //) * Matrix4.CreateRotationY(rotationAngle)  
-                //  * escenarioModel;
-
                 foreach (var parte in objeto.Partes)
                 {
                     Matrix4 parteModel = Matrix4.CreateTranslation(
@@ -225,7 +210,7 @@ namespace Computadora3D
                         (float)parte.Posicion[2]
                     ) * objetoModel;
 
-                    ConfigurarMatrices(parteModel); // 🔹 enviar las matrices al shader antes de dibujar la parte
+                    ConfigurarMatrices(parteModel); 
 
                     foreach (var cara in parte.Caras)
                     {

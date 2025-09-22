@@ -7,17 +7,9 @@ namespace Computadora3D
     class Escenario
     {
         public string Nombre { get; set; } = string.Empty;
-
-        // Centro del escenario [x, y, z]
         public double[] Centro { get; set; } = new double[3];
-
-        // Posición del escenario [x, y, z]
         public double[] Posicion { get; set; } = new double[3];
-
-        // Lista de objetos
         public List<Objeto> Objetos { get; set; } = new();
-
-        // Diccionario para acceso rápido por nombre
         public Dictionary<string, Objeto> ObjetosDiccionario { get; set; } = new();
 
         // Agregar objeto al escenario

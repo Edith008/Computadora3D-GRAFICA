@@ -7,14 +7,11 @@ namespace Computadora3D
     class Partes
     {
         public string Nombre { get; set; } = string.Empty;
-        // Centro de la parte [x, y, z]
         public double[] Centro { get; set; } = new double[3];
-
-        // Posición de la parte en el objeto [x, y, z]
         public double[] Posicion { get; set; } = new double[3];
-        // Lista de caras
         public List<Cara> Caras { get; set; } = new();
         public Dictionary<string, Cara> CarasDiccionario { get; set; } = new();
+        
         // Agregar cara
         public void AgregarCara(Cara cara)
         {

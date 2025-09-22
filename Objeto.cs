@@ -7,10 +7,7 @@ namespace Computadora3D
     class Objeto
     {
         public string Nombre { get; set; } = string.Empty;
-        // Centro del objeto [x, y, z]
         public double[] Centro { get; set; } = new double[3];
-
-        // Posición del objeto en el escenario [x, y, z]
         public double[] Posicion { get; set; } = new double[3];
         public List<Partes> Partes { get; set; } = new();
         public Dictionary<string, Partes> PartesDiccionario { get; set; } = new();
