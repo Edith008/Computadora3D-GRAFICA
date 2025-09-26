@@ -50,23 +50,23 @@ namespace Computadora3D
                 var cargado = JsonSerializer.Deserialize<Escenario>(json);
 
                 if (cargado != null)
-
-
                 {
-
                     Escenario = cargado;
-
-
-                    // Llenar diccionario de objetos
                     Escenario.ObjetosDiccionario = new Dictionary<string, Objeto>();
-                    foreach (var obj in Escenario.Objetos)
-                        Escenario.ObjetosDiccionario[obj.Nombre.Trim()] = obj;
 
                     foreach (var objeto in Escenario.Objetos)
                     {
+                        // Guardar objeto en diccionario
+                        Escenario.ObjetosDiccionario[objeto.Nombre.Trim()] = objeto;
+
                         Console.WriteLine($"  Objeto: {objeto.Nombre}, Partes: {objeto.Partes.Count}");
+
+                        // Construir diccionario de partes
+                        objeto.PartesDiccionario = new Dictionary<string, Partes>();
                         foreach (var parte in objeto.Partes)
                         {
+                            objeto.PartesDiccionario[parte.Nombre.Trim()] = parte;
+
                             Console.WriteLine($"    Parte: {parte.Nombre}, Caras: {parte.Caras.Count}");
                             foreach (var cara in parte.Caras)
                             {
@@ -74,8 +74,6 @@ namespace Computadora3D
                             }
                         }
                     }
-
-                    Console.WriteLine($"Escenario cargado: {Escenario.Nombre}");
                 }
             }
             catch (Exception ex)
@@ -83,6 +81,7 @@ namespace Computadora3D
                 Console.WriteLine("Error al cargar JSON: " + ex.Message);
             }
         }
+
 
         protected override void OnLoad()
         {
@@ -123,35 +122,6 @@ namespace Computadora3D
             _vbo = GL.GenBuffer();
         }
 
-        //protected override void OnUpdateFrame(FrameEventArgs args)
-        //{
-        //    base.OnUpdateFrame(args);
-
-        //    var input = KeyboardState;
-
-        //    if (input.IsKeyDown(Keys.Escape))
-        //    {
-        //        Close();
-        //    }
-        //    float camSpeed = 2.0f;
-        //    Vector3 forward = Vector3.Normalize(camTarget - camPos);
-        //    Vector3 right = Vector3.Normalize(Vector3.Cross(forward, Vector3.UnitY));
-
-        //    float deltaSpeed = camSpeed * (float)args.Time; 
-
-        //    // Mover cámara 
-        //    if (input.IsKeyDown(Keys.W)) camPos += forward * deltaSpeed;
-        //    if (input.IsKeyDown(Keys.S)) camPos -= forward * deltaSpeed;
-        //    if (input.IsKeyDown(Keys.A)) camPos -= right * deltaSpeed;
-        //    if (input.IsKeyDown(Keys.D)) camPos += right * deltaSpeed;
-
-        //    if (input.IsKeyDown(Keys.R))
-        //    {
-        //        rotationAngle += (float)args.Time; // velocidad de rotación (1 rad/s)
-        //    }
-
-        //}
-
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
@@ -174,15 +144,21 @@ namespace Computadora3D
                 Escenario.CambiarProyeccion();
 
             var monitor = Escenario.GetObjeto("Monitor");
-            Console.WriteLine($" ees null??????");
             if (monitor != null)
             {
-                //if (input.IsKeyPressed(Keys.M)) // tecla para mover monitor
-                //    monitor.AplicarTraslacion(new Vector3(1f, 0f, 0f));
-                Console.WriteLine($" entro el monitorr ");
-                if (input.IsKeyDown(Keys.M))
-                    monitor.AplicarTraslacion(new Vector3((float)(2.0f * args.Time), 0f, 0f));
+                if (input.IsKeyPressed(Keys.M))
+                    monitor.AplicarRotacion(0.5f);
 
+                if (input.IsKeyPressed(Keys.N)) // 
+                    monitor.AplicarTraslacion(new Vector3(1f, 0f, 0f));
+                //if (input.IsKeyDown(Keys.M))
+                //    monitor.AplicarTraslacion(new Vector3((float)(2.0f * args.Time), 0f, 0f));
+
+                if (input.IsKeyPressed(Keys.B))
+                    monitor.AplicarEscalado(new Vector3(1.1f));
+
+                if (input.IsKeyPressed(Keys.V))
+                    monitor.CambiarProyeccion();
             }
 
             var pantalla = monitor?.GetParte("pantalla");
@@ -190,7 +166,33 @@ namespace Computadora3D
             {
                 if (input.IsKeyPressed(Keys.P)) // tecla para rotar pantalla
                     pantalla.AplicarRotacion(MathHelper.DegreesToRadians(45f));
+
+                if (input.IsKeyPressed(Keys.O)) // 
+                    pantalla.AplicarTraslacion(new Vector3(1f, 0f, 0f));
+
+                if (input.IsKeyPressed(Keys.I))
+                    pantalla.AplicarEscalado(new Vector3(1.1f));
+
+                if (input.IsKeyPressed(Keys.U))
+                    pantalla.CambiarProyeccion();
             }
+
+            var soporte = monitor?.GetParte("Soporte");
+            if (soporte != null)
+            {
+                if (input.IsKeyPressed(Keys.A)) // tecla para rotar pantalla
+                    soporte.AplicarRotacion(MathHelper.DegreesToRadians(45f));
+
+                if (input.IsKeyPressed(Keys.S)) // 
+                    soporte.AplicarTraslacion(new Vector3(1f, 0f, 0f));
+
+                if (input.IsKeyPressed(Keys.D))
+                    soporte.AplicarEscalado(new Vector3(1.1f));
+
+                if (input.IsKeyPressed(Keys.Q))
+                    soporte.CambiarProyeccion();
+            }
+
 
         }
 
@@ -212,21 +214,6 @@ namespace Computadora3D
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
         }
-
-        //private void ConfigurarMatrices(Matrix4 model)
-        //{
-        //    // Proyección 
-        //    Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60f), Size.X / (float)Size.Y, 0.1f, 100f);
-
-        //    // Vista (depende de la posición de la cámara)
-        //    Matrix4 view = Matrix4.LookAt(camPos, camTarget, Vector3.UnitY);
-
-        //    // Enviar al shader
-        //    GL.UseProgram(_shaderProgram);
-        //    GL.UniformMatrix4(GL.GetUniformLocation(_shaderProgram, "projection"), false, ref projection);
-        //    GL.UniformMatrix4(GL.GetUniformLocation(_shaderProgram, "view"), false, ref view);
-        //    GL.UniformMatrix4(GL.GetUniformLocation(_shaderProgram, "model"), false, ref model);
-        //}
 
         private void ConfigurarMatrices(Matrix4 model)
         {
@@ -267,7 +254,6 @@ namespace Computadora3D
 
             Vector3 centro = ObtenerCentroEscenario();
             Matrix4 escenarioModel = Matrix4.CreateTranslation(-(float)centro.X, -(float)centro.Y, -(float)centro.Z);
-
             Matrix4 transformaciones = Matrix4.CreateScale(Escenario.Escalado) *
                                        Matrix4.CreateRotationY(Escenario.RotacionY) *
             Matrix4.CreateTranslation(Escenario.Traslacion);
